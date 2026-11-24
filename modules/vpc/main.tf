@@ -7,3 +7,11 @@ locals {
   public_subnets=[for i in range(var.var.az_count):cidrsubnet(var.cidr,8,i)]
   private_subnets=[for i in range(var.var.az_count):cidrsubnet(var.cidr,8,i+10)]
 }
+
+resource "aws_vpc" "this" {
+  cidr_block           = var.cidr
+  enable_dns_hostnames = true
+  enable_dns_support   = true
+
+  tags = merge(var.tags, { Name = var.name })
+}
