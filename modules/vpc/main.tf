@@ -21,3 +21,16 @@ resource "aws_internet_gateway" "this" {
 
   tags = merge(var.tags, { Name = "${var.name}-igw" })
 }
+resource "aws_subnet" "public" {
+  count = var.az_count
+
+  vpc_id                  = aws_vpc.this.id
+  cidr_block              = local.public_subnets[count.index]
+  availability_zone       = local.azs[count.index]
+  map_public_ip_on_launch = false
+
+  tags = merge(var.tags, {
+    Name                     = "${var.name}-public-${local.azs[count.index]}"
+    "kubernetes.io/role/elb" = "1"
+  })
+}
